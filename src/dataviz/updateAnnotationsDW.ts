@@ -64,32 +64,38 @@ export default async function updateAnnotationsDW(
         mobileFallback?: boolean
     }[]
 ) {
-    const annotationsWithProps = annotations.map((annotation) => ({
-        bg: annotation.bg ?? false,
-        dx: annotation.dx ?? 0,
-        dy: annotation.dy ?? 0,
-        bold: annotation.bold ?? false,
-        size: annotation.size ?? 12,
-        align: annotation.align ?? "mr",
-        color: annotation.color ?? "#8C8C8C",
-        width: annotation.width ?? 20,
-        italic: annotation.italic ?? false,
-        underline: annotation.underline ?? false,
-        showMobile: annotation.showMobile ?? true,
-        showDesktop: annotation.showDesktop ?? true,
+    const defaults = {
+        bg: false,
+        dx: 0,
+        dy: 0,
+        bold: false,
+        size: 12,
+        align: "mr",
+        color: "#8C8C8C",
+        width: 20,
+        italic: false,
+        underline: false,
+        showMobile: true,
+        showDesktop: true,
         connectorLine: {
-            type: annotation.connectorLine?.type ?? "straight",
-            circle: annotation.connectorLine?.circle ?? false,
-            stroke: annotation.connectorLine?.stroke ?? 1,
-            enabled: annotation.connectorLine?.enabled ?? false,
-            arrowHead: annotation.connectorLine?.arrowHead ?? "lines",
-            circleStyle: annotation.connectorLine?.circleStyle ?? "solid",
-            circleRadius: annotation.connectorLine?.circleRadius ?? 10,
-            inheritColor: annotation.connectorLine?.inheritColor ?? false,
-            targetPadding: annotation.connectorLine?.targetPadding ?? 4,
+            type: "straight",
+            circle: false,
+            stroke: 1,
+            enabled: false,
+            arrowHead: "lines",
+            circleStyle: "solid",
+            circleRadius: 10,
+            inheritColor: false,
+            targetPadding: 4
         },
-        mobileFallback: annotation.mobileFallback ?? false,
-    }))
+        mobileFallback: false
+    };
+    
+    const annotationsWithProps = annotations.map((annotation) => ({
+        ...defaults,
+        ...annotation,
+        connectorLine: { ...defaults.connectorLine, ...annotation.connectorLine ?? {} },
+    }));
 
     const response = await fetch(
         `https://api.datawrapper.de/v3/charts/${chartId}`,
